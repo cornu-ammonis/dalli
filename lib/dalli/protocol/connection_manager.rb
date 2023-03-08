@@ -98,6 +98,8 @@ module Dalli
       end
 
       def confirm_ready!
+        Dalli.logger.debug { "gonna fail" } if request_in_progress?
+        Dalli.logger.debug { caller } if request_in_progress?
         error_on_request!(RuntimeError.new('Already writing to socket')) if request_in_progress?
         close_on_fork if fork_detected?
       end

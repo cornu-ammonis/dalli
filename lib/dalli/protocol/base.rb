@@ -212,7 +212,9 @@ module Dalli
         keys.each do |key|
           req << quiet_get_request(key)
         end
+        Dalli.logger.debug { "pipline get req nonblock" }
         write_nonblock(req)
+        Dalli.logger.debug { "pipline get noop nonblock" }
         write_noop(nonblock: true)
       end
 

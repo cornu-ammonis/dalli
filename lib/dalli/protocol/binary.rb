@@ -161,8 +161,10 @@ module Dalli
       def write_noop(nonblock: false)
         req = RequestFormatter.standard_request(opkey: :noop)
         if nonblock
+          Dalli.logger.debug { "noop nonblock" }
           write_nonblock(req)
         else 
+          Dalli.logger.debug { "noop block" }
           write(req)
         end
       end
