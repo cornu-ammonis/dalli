@@ -49,6 +49,7 @@ module Dalli
       groups.each do |server, keys_for_server|
         Dalli.logger.debug { "Calling setup for server #{server.inspect}"}
         server.pipeline_get_setup
+        Dalli.logger.debug { "Donecalling setup for server"}
         server.request(:pipelined_get, keys_for_server)
       rescue DalliError, NetworkError => e
         Dalli.logger.debug { e.inspect }

@@ -62,8 +62,12 @@ module Dalli
       # verify and start request before sending GETKQ commands, 
       # otherwise the socket could get corrupted if we fail to reach pipline_response stage
       def pipeline_get_setup
+        Dalli.logger.debug { "verifying state" }
         verify_state(:getkq)
+        Dalli.logger.debug { "starting request" }
+
         @connection_manager.start_request!
+        Dalli.logger.debug { "done" }
       end 
 
       # Start reading key/value pairs from this connection. This is usually called
@@ -72,7 +76,6 @@ module Dalli
       #
       # Returns nothing.
       def pipeline_response_setup
-        write_noop
         response_buffer.reset
       end
 
@@ -209,8 +212,8 @@ module Dalli
         keys.each do |key|
           req << quiet_get_request(key)
         end
-        # Could send noop here instead of in pipeline_response_setup
         write_nonblock(req)
+        write_noop(nonblock: true)
       end
 
       def response_buffer
