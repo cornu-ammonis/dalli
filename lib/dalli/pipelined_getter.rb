@@ -44,7 +44,10 @@ module Dalli
     # the opaque value to match requests to responses.
     ##
     def make_getkq_requests(groups)
+      Dalli.logger.debug { groups.inspect }
+      Dalli.logger.debug { groups.count }
       groups.each do |server, keys_for_server|
+        Dalli.logger.debug { "Calling setup for server #{server.inspect}"}
         server.pipeline_get_setup
         server.request(:pipelined_get, keys_for_server)
       rescue DalliError, NetworkError => e
