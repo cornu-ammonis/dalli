@@ -25,6 +25,18 @@ module Dalli
         response_processor.get(cache_nils: cache_nils?(options))
       end
 
+      def safe_get(key, options = nil)
+        req = RequestFormatter.standard_request(opkey: :getk, key: key)
+        write(req)
+        response_processor.getk(key, cache_nils: cache_nils?(options)).last
+      rescue Dalli::SocketCorruptionError => e
+        Dalli.logger.debug { e.inspect }
+        
+        # Close connection; connection manager logic will automatically reopen it after a delay.
+        # This raises its own network error handled upstream.
+        down!   
+      end
+
       def quiet_get_request(key)
         RequestFormatter.standard_request(opkey: :getkq, key: key)
       end
